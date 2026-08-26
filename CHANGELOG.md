@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Reject non-object JSON probe responses consistently across Python runtimes instead of silently converting them to an empty object.
+- Preserve bounded `request_failed:<endpoint>` behavior for deeply nested JSON whether the runtime raises `RecursionError` or successfully decodes a nested non-object value.
+
 ## 0.1.0
 
 - Initial public source release.

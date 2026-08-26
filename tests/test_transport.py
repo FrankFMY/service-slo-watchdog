@@ -161,6 +161,17 @@ class TransportTest(unittest.TestCase):
         self.assertIn("request_failed:version", result["errors"])
         self.assertNotIn("private detail", str(result))
 
+    def test_non_object_json_becomes_a_bounded_request_failure(self):
+        def request(_base_url, path, **_kwargs):
+            if path == "/version":
+                return 200, b"[]", 0.01
+            raise OSError("private detail")
+
+        contract = ProbeContract(service_name="orders-api", metric_prefix="orders_api", dependencies=("database",))
+        with mock.patch("service_slo_watchdog.watchdog._request", side_effect=request):
+            result = probe("https://example.com", contract=contract, expected_revision="abc123", timeout=0.1)
+        self.assertIn("request_failed:version", result["errors"])
+
     def test_probe_returns_bounded_transport_errors(self):
         contract = ProbeContract(service_name="orders-api", metric_prefix="orders_api", dependencies=("database",))
         with mock.patch("service_slo_watchdog.watchdog._request", side_effect=OSError("private network detail")):

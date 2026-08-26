@@ -400,7 +400,9 @@ def probe(
                     transport_errors.append(f"metrics_http_status:{status}")
             elif status == 200:
                 decoded = json.loads(body)
-                payloads[name] = decoded if isinstance(decoded, dict) else {}
+                if not isinstance(decoded, dict):
+                    raise ValueError("JSON probe endpoint must return an object")
+                payloads[name] = decoded
             else:
                 transport_errors.append(f"{name}_http_status:{status}")
         except (
