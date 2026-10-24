@@ -8,7 +8,7 @@ The tool runs outside the monitored service, verifies five credential-free HTTP 
 
 A process-level health check can stay green while a deployment serves the wrong revision, a required worker is down, a database check is slow, or an operational pass route fails. Service SLO Watchdog turns those independent point checks into one bounded external contract.
 
-## Guarantees
+## Runtime behavior
 
 - standard-library-only runtime;
 - exact expected-revision checks across version, readiness and Prometheus metrics;
@@ -41,7 +41,13 @@ python -m pip install .
 ## Report mode
 
 ```bash
-service-slo-watchdog   --base-url https://service.example   --service-name orders-api   --metric-prefix orders_api   --dependencies database,queue   --expected-revision abc123   --report
+service-slo-watchdog \
+  --base-url https://service.example \
+  --service-name orders-api \
+  --metric-prefix orders_api \
+  --dependencies database,queue \
+  --expected-revision abc123 \
+  --report
 ```
 
 Report mode prints bounded JSON and exits nonzero when any SLI fails.
@@ -49,7 +55,13 @@ Report mode prints bounded JSON and exits nonzero when any SLI fails.
 ## Quiet scheduler mode
 
 ```bash
-service-slo-watchdog   --base-url https://service.example   --service-name orders-api   --metric-prefix orders_api   --dependencies database,queue   --failure-threshold 2   --state-file ~/.local/state/service-slo-watchdog/orders-api.json
+service-slo-watchdog \
+  --base-url https://service.example \
+  --service-name orders-api \
+  --metric-prefix orders_api \
+  --dependencies database,queue \
+  --failure-threshold 2 \
+  --state-file ~/.local/state/service-slo-watchdog/orders-api.json
 ```
 
 Ordinary service failures return exit code zero in quiet mode: the state machine owns suppression and recovery delivery. Unexpected watchdog bugs still exit nonzero. Non-empty stdout is suitable for a scheduler/notifier; unchanged healthy or failing state produces no output.
@@ -85,14 +97,14 @@ This is a bounded point-probe and state-transition tool. It is not historical SL
 
 The wall-clock deadline requires a POSIX runtime with `setitimer` support.
 
-## Author
+## Author and contact
 
-**Artem Prianishnikov**
+**Artem Prianishnikov** · [FrankFMY](https://github.com/FrankFMY)
 
-- GitHub: https://github.com/FrankFMY
-- Website: https://frankfmy.com
-- Email: Pryanishnikovartem@gmail.com
+[Website](https://frankfmy.com) · [Telegram](https://t.me/FrankFMY) · [LinkedIn](https://www.linkedin.com/in/frankfmy/) · [X](https://x.com/FrankFMY) · [npm profile](https://www.npmjs.com/~frankfmy)
+
+Email: [frankfmy@proton.me](mailto:frankfmy@proton.me) · [Pryanishnikovartem@gmail.com](mailto:Pryanishnikovartem@gmail.com)
 
 ## License
 
-Apache-2.0 © 2026 Artem Prianishnikov. See [LICENSE](LICENSE).
+Apache-2.0 © 2026 Artem Prianishnikov. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
